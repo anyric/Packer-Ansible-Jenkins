@@ -1,0 +1,42 @@
+---
+- name: Updating OS
+  apt: update_cache=yes
+
+- name: Exporting Lang variables
+  shell: |
+    export LANG="en_US.UTF-8"
+    export LC_ALL="en_US.UTF-8"
+    export LC_CTYPE="en_US.UTF-8"
+
+- name: Installing packages
+  apt:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - nginx
+
+- name: Install latest version of "openjdk-8-jdk" ignoring "install-recommends"
+  apt:
+    name: openjdk-8-jdk
+    state: latest
+    install_recommends: no
+
+- name: Installing Jenkins
+  shell: |
+    wget -q -O - https://pkg.jenkins.io/debian/jenkins.io.key | sudo apt-key add -
+    sudo sh -c 'echo deb http://pkg.jenkins.io/debian-stable binary/ > /etc/apt/sources.list.d/jenkins.list'
+    sudo apt-get update
+    sudo apt-get install -y jenkins
+    sudo ufw allow 8080
+
+- name: Starting Jenkins
+  shell: |
+    sudo systemctl start jenkins
+
+- name: Starting on boot
+  service:
+    name: "{{ item }}"
+    enabled: yes
+    state: started
+  with_items:
+    - nginx
