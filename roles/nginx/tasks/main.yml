@@ -4,12 +4,12 @@
 
 - name: Creating Nginx Config file
   shell: | 
-    sudo rm -rf /etc/nginx/sites-available/jenkins /etc/nginx/sites-enabled/jenkins
-    sudo bash -c 'cat <<EOF> /etc/nginx/sites-available/jenkins
+    rm -rf /etc/nginx/sites-available/jenkins /etc/nginx/sites-enabled/jenkins
+    sudo bash -c 'cat <<EOF> /etc/nginx/sites-available/kube
       server {
               listen 80;
               location / {
-                  proxy_pass http://127.0.0.1:8080/;
+                  proxy_pass http://127.0.0.1:8001/;
                   proxy_set_header Host \$host;
                   proxy_set_header X-Forwarded-Proto \$scheme;
                   proxy_set_header X-Real-IP \$remote_addr;
@@ -17,9 +17,9 @@
               }
       }
       EOF'
-    sudo rm -rf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
-    sudo ln -s /etc/nginx/sites-available/jenkins /etc/nginx/sites-enabled/
-    sudo ufw allow 'Nginx Full'
+    rm -rf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
+    ln -s /etc/nginx/sites-available/jenkins /etc/nginx/sites-enabled/
+    ufw allow 'Nginx Full'
 
 - name: restart nginx
   service:

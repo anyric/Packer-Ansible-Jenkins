@@ -6,29 +6,31 @@
   "builders": [
     {
       "type": "amazon-ebs",
+      "name": "Jenkins-Instance",
       "access_key": "{{user `aws_access_key`}}",
       "secret_key": "{{user `aws_secret_key`}}",
       "region": "us-east-2",
       "source_ami": "ami-916f59f4",
       "instance_type": "t2.micro",
       "ssh_username": "ubuntu",
-      "ami_name": "packer-ubuntu-server-{{isotime | clean_ami_name}}",
-      "ami_description": "A demo AMI created using packer",
+      "ami_name": "ubuntu-jenkins-server-{{isotime | clean_ami_name}}",
+      "ami_description": "An AMI created using packer for deploying Jenkins Server",
       "tags": {
-              "name": "Jenkins Demo",
-              "role": "JenkinsServerDemo",
+              "name": "Jenkins-Instance",
+              "role": "Jenkins-Server",
               "version":"v0.1"
       },
       "run_tags": {
-            "Name": "Jenkins Instance",
-            "role": "packerBuildDemo"
+            "Name": "Jenkins-Instance",
+            "role": "Jenkins-Server"
       }
     }
   ],
   "provisioners": [
     {
       "type": "ansible",
-      "playbook_file": "./playbook.yml"
+      "playbook_file": "./jenkins-playbook.yml",
+      "only":["Jenkins-Instance"]
     }
   ]
 }
